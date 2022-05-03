@@ -12,7 +12,7 @@ Use `Makefile` to run all the examples. To list all available options use `make`
 
 - Run `make up` to start everything up.
 - Run `make kafka-connect-example` to configure `example` database connector.
-- Run `make mariadb` to access database shell, then `USE example; INSERT INTO example(example) VALUES ("Hello World!");`.
+- Run `make mariadb` to access database shell, run the below example SQL queries to create records. 
 - Run `make kafka-consume-example-example` to see coming events.
 
 ## Kafka
@@ -40,6 +40,6 @@ kafka-console-consumer.sh --topic kafka-sandbox-mariadb.example.example --from-b
 ## MariaDB
 
 ```sql
-USE example;
-INSERT INTO example(example) VALUES ("Hello World!");
+USE `example`;
+INSERT INTO `example`(`example`) VALUES ("Hello World!");
 ```
