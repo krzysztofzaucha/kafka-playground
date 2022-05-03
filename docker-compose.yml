@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: mariadb/Dockerfile
     image: ${IMAGE_BASE_NAME}-mariadb:latest
-    container_name: kafka-sandbox-mariadb
+    container_name: ${BASE_NAME}-mariadb
     environment:
       - "MYSQL_ROOT_PASSWORD=password"
       - "MYSQL_ROOT_HOST=%"
@@ -17,7 +17,7 @@ services:
 
   zookeeper:
     image: debezium/zookeeper:latest
-    container_name: kafka-sandbox-zookeeper
+    container_name: ${BASE_NAME}-zookeeper
     environment:
       #- "SERVER_ID=1"
       #- "SERVER_COUNT=1"
@@ -29,14 +29,14 @@ services:
 
   kafka:
     image: debezium/kafka:latest
-    container_name: kafka-sandbox-kafka
+    container_name: ${BASE_NAME}-kafka
     depends_on:
       - zookeeper
     environment:
       #- "BROKER_ID=1"
-      - "ZOOKEEPER_CONNECT=kafka-sandbox-zookeeper:2181"
-      - "HOST_NAME=kafka-sandbox-kafka"
-      - "ADVERTISED_HOST_NAME=kafka-sandbox-kafka"
+      - "ZOOKEEPER_CONNECT=${BASE_NAME}-zookeeper:2181"
+      - "HOST_NAME=${BASE_NAME}-kafka"
+      - "ADVERTISED_HOST_NAME=${BASE_NAME}-kafka"
       #- "HEAP_OPTS=..."
       #- "CREATE_TOPICS:config_storage_topic:1:1,offset_storage_topic:1:1"
       - "LOG_LEVEL=ERROR"
@@ -46,7 +46,7 @@ services:
 
   connect:
     image: debezium/connect:latest
-    container_name: kafka-sandbox-connect
+    container_name: ${BASE_NAME}-connect
     depends_on:
       - zookeeper
       - kafka
@@ -55,9 +55,9 @@ services:
       #- "GROUP_ID=1"
       - "CONFIG_STORAGE_TOPIC=config_storage_topic"
       - "OFFSET_STORAGE_TOPIC=offset_storage_topic"
-      - "BOOTSTRAP_SERVERS=kafka-sandbox-kafka:9092"
-      - "HOST_NAME=kafka-sandbox-connect"
-      - "ADVERTISED_HOST_NAME=kafka-sandbox-connect"
+      - "BOOTSTRAP_SERVERS=${BASE_NAME}-kafka:9092"
+      - "HOST_NAME=${BASE_NAME}-connect"
+      - "ADVERTISED_HOST_NAME=${BASE_NAME}-connect"
       # - "ADVERTISED_PORT="
       - "KEY_CONVERTER=org.apache.kafka.connect.json.JsonConverter"
       - "VALUE_CONVERTER=org.apache.kafka.connect.json.JsonConverter"
@@ -70,8 +70,6 @@ services:
       - "LOG_LEVEL=ERROR"
       - "ENABLE_APICURIO_CONVERTERS=false"
       - "ENABLE_DEBEZIUM_SCRIPTING=false"
-    volumes:
-      - "connect-conf:/kafka/config"
     ports:
       - "8083:8083"
 
