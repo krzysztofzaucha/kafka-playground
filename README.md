@@ -1,6 +1,8 @@
 # Kafka Sandbox
 
-This repository contains basic Kafka, Kafka Connect and MariaDB configuration.
+This repository contains basic **Zookeeper**, **Kafka**, **Kafka Connect** and **MariaDB** configuration.
+
+To run this example **Docker** installation is required.
 
 ## Makefile
 
