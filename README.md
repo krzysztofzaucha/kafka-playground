@@ -1,5 +1,7 @@
 # Kafka Sandbox
 
+This repository contains basic Kafka, Kafka Connect and MariaDB configuration.
+
 ## Kafka
 
 ```bash
