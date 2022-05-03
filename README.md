@@ -40,5 +40,6 @@ kafka-console-consumer.sh --topic kafka-sandbox-mariadb.example.example --from-b
 ## MariaDB
 
 ```sql
-INSERT INTO `example`(`example`) VALUES ("Hello World!");
+USE example;
+INSERT INTO example(example) VALUES ("Hello World!");
 ```
