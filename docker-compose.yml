@@ -1,0 +1,89 @@
+version: "3.9"
+
+services:
+  mariadb:
+    build:
+      context: .
+      dockerfile: mariadb/Dockerfile
+    image: ${IMAGE_BASE_NAME}-mariadb:latest
+    container_name: kafka-sandbox-mariadb
+    environment:
+      - "MYSQL_ROOT_PASSWORD=password"
+      - "MYSQL_ROOT_HOST=%"
+    volumes:
+      - "./sql:/docker-entrypoint-initdb.d"
+      - "mariadb-data:/var/lib/mysql"
+    restart: always
+
+  zookeeper:
+    image: debezium/zookeeper:latest
+    container_name: kafka-sandbox-zookeeper
+    environment:
+      #- "SERVER_ID=1"
+      #- "SERVER_COUNT=1"
+      - "LOG_LEVEL=ERROR"
+    volumes:
+      - "zookeeper-conf:/zookeeper/conf"
+      - "zookeeper-data:/zookeeper/data"
+      - "zookeeper-txns:/zookeeper/txns"
+
+  kafka:
+    image: debezium/kafka:latest
+    container_name: kafka-sandbox-kafka
+    depends_on:
+      - zookeeper
+    environment:
+      #- "BROKER_ID=1"
+      - "ZOOKEEPER_CONNECT=kafka-sandbox-zookeeper:2181"
+      - "HOST_NAME=kafka-sandbox-kafka"
+      - "ADVERTISED_HOST_NAME=kafka-sandbox-kafka"
+      #- "HEAP_OPTS=..."
+      #- "CREATE_TOPICS:config_storage_topic:1:1,offset_storage_topic:1:1"
+      - "LOG_LEVEL=ERROR"
+      #- "KAFKA_LISTENERS=PLAINTEXT://localhost:9092"
+    volumes:
+      - "kafka-data:/kafka/data"
+
+  connect:
+    image: debezium/connect:latest
+    container_name: kafka-sandbox-connect
+    depends_on:
+      - zookeeper
+      - kafka
+      - mariadb
+    environment:
+      #- "GROUP_ID=1"
+      - "CONFIG_STORAGE_TOPIC=config_storage_topic"
+      - "OFFSET_STORAGE_TOPIC=offset_storage_topic"
+      - "BOOTSTRAP_SERVERS=kafka-sandbox-kafka:9092"
+      - "HOST_NAME=kafka-sandbox-connect"
+      - "ADVERTISED_HOST_NAME=kafka-sandbox-connect"
+      # - "ADVERTISED_PORT="
+      - "KEY_CONVERTER=org.apache.kafka.connect.json.JsonConverter"
+      - "VALUE_CONVERTER=org.apache.kafka.connect.json.JsonConverter"
+      - "INTERNAL_KEY_CONVERTER=org.apache.kafka.connect.json.JsonConverter"
+      - "INTERNAL_VALUE_CONVERTER=org.apache.kafka.connect.json.JsonConverter"
+      - "OFFSET_FLUSH_INTERVAL_MS=60000"
+      - "OFFSET_FLUSH_TIMEOUT_MS=5000"
+      - "SHUTDOWN_TIMEOUT=10000"
+      # - "HEAP_OPTS=..."
+      - "LOG_LEVEL=ERROR"
+      - "ENABLE_APICURIO_CONVERTERS=false"
+      - "ENABLE_DEBEZIUM_SCRIPTING=false"
+    volumes:
+      - "connect-conf:/kafka/config"
+    ports:
+      - "8083:8083"
+
+volumes:
+  mariadb-data:
+  zookeeper-conf:
+  zookeeper-data:
+  zookeeper-txns:
+  kafka-conf:
+  kafka-data:
+  connect-conf:
+
+networks:
+  default:
+    name: ${NETWORK}
