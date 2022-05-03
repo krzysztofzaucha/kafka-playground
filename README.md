@@ -6,6 +6,13 @@ This repository contains basic Kafka, Kafka Connect and MariaDB configuration.
 
 Use `Makefile` to run all the examples. To list all available options use `make`.
 
+## Instructions
+
+- Run `make up` to start everything up.
+- Run `make kafka-connect-example` to configure `example` database connector.
+- Run `make mariadb` to access database shell, then `USE example; INSERT INTO example(example) VALUES ("Hello World!");`.
+- Run `make kafka-consume-example-example` to see coming events.
+
 ## Kafka
 
 Call the following from the host machine.
