@@ -14,3 +14,4 @@ Use `Makefile` to run all the examples. To list all available options run `make`
 - Run `make make kafka-connect-connectors` to configure `example` database connector.
 - Run `make mariadb` to access database shell, run the below example SQL queries to create records. 
 - Run `make kafka-consume-example-example` to consume `example.example` table events.
+- run `make mariadb-insert-example` to insert new records to the `example.example` table.
