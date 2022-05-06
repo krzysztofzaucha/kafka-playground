@@ -1,0 +1,61 @@
+@startuml
+!include <logos/mariadb>
+!include <cloudinsight/kafka>
+!include <cloudinsight/zookeeper>
+
+!include <awslib/AWSSimplified>
+
+<style>
+componentDiagram {
+  BackGroundColor white
+  LineThickness 1
+  LineColor #333333
+}
+document {
+  BackGroundColor white
+}
+</style>
+
+' skinparam monochrome true
+skinparam defaulttextalignment center
+
+skinparam sequence {
+    ArrowColor #333333
+}
+
+skinparam rectangle {
+    RoundCorner<< round20 >> 20
+    RoundCorner<< round30 >> 30
+    RoundCorner<< round40 >> 40
+    RoundCorner<< round50 >> 50
+}
+
+database "<$mariadb>\n**Database**\n//example.(primary,secondary,tertiary)//" as database #f5d0c4
+
+
+rectangle "Kafka" as kafka #d4e0b6 {
+queue "<$kafka>\nTopic\n**example.primary**" as kafkaprimarytopic #84ba87
+queue "<$kafka>\nTopic\n**example.secondary**" as kafkasecondarytopic #84ba87
+queue "<$kafka>\nTopic\n**example.tertiary**" as kafkatertiarytopic #84ba87
+}
+
+rectangle "<$zookeeper>\nZookeeper" as zookeeper #d4e0b6
+rectangle "<$kafka>\nKafka Connect" as connect #d4e0b6
+
+rectangle "Destination\n**primary**\n//(a destination for the primary table events)//" as destinationprimary <<round20>> #8abded
+rectangle "Destination\n**secondary**\n//(a destination for the secondary table events)//" as destinationsecondary <<round20>> #8abded
+rectangle "Destination\n**tertiary**\n//(a destination for the tertiary table events)//" as destinationtertiary <<round20>> #8abded
+
+kafka -down- zookeeper
+
+database -> connect
+
+connect -down-> kafkaprimarytopic
+connect -down-> kafkasecondarytopic
+connect -down-> kafkatertiarytopic
+
+kafkaprimarytopic -down-> destinationprimary
+kafkasecondarytopic -down-> destinationsecondary
+kafkatertiarytopic -down-> destinationtertiary
+
+@enduml

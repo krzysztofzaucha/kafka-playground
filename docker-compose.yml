@@ -12,7 +12,9 @@ services:
       - "MYSQL_ROOT_HOST=%"
     volumes:
       - "./sql/init.sql:/docker-entrypoint-initdb.d/init.sql"
-      - "./sql/insert-example.sql:/mnt/insert-example.sql"
+      - "./sql/insert-primary.sql:/mnt/insert-primary.sql"
+      - "./sql/insert-secondary.sql:/mnt/insert-secondary.sql"
+      - "./sql/insert-tertiary.sql:/mnt/insert-tertiary.sql"
       - "mariadb-data:/var/lib/mysql"
     restart: always
 
