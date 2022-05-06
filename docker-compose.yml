@@ -11,7 +11,8 @@ services:
       - "MYSQL_ROOT_PASSWORD=password"
       - "MYSQL_ROOT_HOST=%"
     volumes:
-      - "./sql:/docker-entrypoint-initdb.d"
+      - "./sql/init.sql:/docker-entrypoint-initdb.d/init.sql"
+      - "./sql/insert-example.sql:/mnt/insert-example.sql"
       - "mariadb-data:/var/lib/mysql"
     restart: always
 
@@ -70,8 +71,9 @@ services:
       - "LOG_LEVEL=ERROR"
       - "ENABLE_APICURIO_CONVERTERS=false"
       - "ENABLE_DEBEZIUM_SCRIPTING=false"
-    ports:
-      - "8083:8083"
+    volumes:
+      - "./config/example.json:/docker-entrypoint-init.d/example.json"
+      - "./sh/connect.sh:/docker-entrypoint-init.d/connect.sh"
 
 volumes:
   mariadb-data:

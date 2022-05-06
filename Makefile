@@ -31,6 +31,9 @@ up: ## Start the example
 mariadb: ## Access MariaDB shell
 	@docker exec -it ${BASE_NAME}-mariadb mysql -uroot -ppassword
 
+mariadb-insert-example: ## Insert example row to `example`.`example` table
+	@docker exec -it ${BASE_NAME}-mariadb sh -c "mysql -uroot -ppassword example < /mnt/insert-example.sql"
+
 #########
 # Kafka #
 #########
@@ -41,11 +44,8 @@ kafka: ## Access kafka container
 kafka-topic-list: ## List Kafka topics
 	@docker exec -it ${BASE_NAME}-kafka sh -c "/kafka/bin/kafka-topics.sh --list --bootstrap-server ${BASE_NAME}-kafka:9092"
 
-kafka-connect-example: ## Connect `example` database
-	@curl -i -X POST \
-		-H "accept: application/json" \
-		-H "content-type: application/json" localhost:8083/connectors \
-		-d '@config/example.json'
+kafka-connect-connectors: ## Connect database connectors
+	@docker exec -it ${BASE_NAME}-connect sh -c "/docker-entrypoint-init.d/connect.sh"
 
 kafka-consume-example-example: ## Consume `example`.`example` table events
 	@docker exec -it ${BASE_NAME}-kafka sh -c "/kafka/bin/kafka-console-consumer.sh --topic ${BASE_NAME}-mariadb.example.example --from-beginning --bootstrap-server ${BASE_NAME}-kafka:9092"
