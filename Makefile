@@ -67,6 +67,6 @@ kafka-consume-example-tertiary: ## Consume `example`.`primary` table events
 ###############
 
 reset: ## Cleanup
-	@docker stop $(shell docker ps -aq)
-	@docker system prune
-	@docker volume rm $(shell docker volume ls -q)
+	@docker stop $(shell docker ps -aq) || true
+	@docker system prune || true
+	@docker volume rm $(shell docker volume ls -q) || true
