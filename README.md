@@ -1,4 +1,4 @@
-# Kafka Sandbox
+# Kafka Playground
 
 This repository contains basic **Zookeeper**, **Kafka**, **Kafka Connect** and **MariaDB** configuration.
 
